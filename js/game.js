@@ -52,41 +52,42 @@ addEventListener("keyup", function (e) {
 hero.x = canvas.width / 2;
 hero.y = canvas.height / 2;
 
-// set monster speed
-monster.speed = Math.random();
-monster.direction = Math.random() * Math.PI * 2;
-monster.turnSpeed = 0;
-
-monster.direction += monster.turnSpeed * 0.01;
-monster.x += Math.sin(monster.direction) * monster.speed;
-monster.y += Math.cos(monster.direction) * monster.speed;
-
-var monstersCount = 0;
+function gameOver(){
+    console.log("You Lose!");
+}
+var monsterCount = [];
 // Reset the game when the player catches a monster
-var reset = function () {
-//    if (monstersCount = 5){
-//        // Throw the monster somewhere on the screen randomly
-//        monster.x = 32 + (Math.random() * (canvas.width - 64));
-//        monster.y = 0; //32 + (Math.random() * (canvas.height - 64));
-//    }
-//    else {
-        // Throw the monster somewhere on the screen randomly
-        monster.x = 32 + (Math.random() * (canvas.width - 64));
-        monster.y = 0; //32 + (Math.random() * (canvas.height - 64));
 
-        // this sets the motion of the monster
-        function moveMonster(){
-           if (monster.y < canvas.height -32) {
-                monster.y += 1;
-                setTimeout(moveMonster, 50);
-            }
-        }
-        moveMonster();
-        monstersCount +=1;
-//    }
+var reset = function () {
+    for (var i=0; i<3; i++){
+    monster.x = 32 + (Math.random() * (canvas.width - 64));
+    monster.y = 0; //32 + (Math.random() * (canvas.height - 64));
+
+    monsterCount.push({'x':monster.x,'y':monster.y});
+    console.log(monsterCount);
+    }
 };
 
+// this sets the motion of the monster
+var lostLimit = 1000;
+var lostMonsterCount = 0;
+function moveMonster(monsterIndex){
+   if (monsterCount[monsterIndex].y < canvas.height -32) {
+        monsterCount[monsterIndex].y += .5;
+   }
+   else { // if monster reaches the bottom of the board...
 
+       lostMonsterCount += 1;
+       console.log(lostMonsterCount);
+       if (lostMonsterCount == lostLimit){
+           gameOver();
+       }
+       else {
+            monsterCount.splice(monsterIndex,1);
+       }
+   }
+
+}
 
 
 // Update game objects
@@ -113,15 +114,18 @@ var update = function (modifier) {
 	}
 
 	// Are they touching?
-	if (
-		hero.x <= (monster.x + 32)
-		&& monster.x <= (hero.x + 32)
-		&& hero.y <= (monster.y + 32)
-		&& monster.y <= (hero.y + 32)
-	) {
-		++monstersCaught;
-		reset();
-	}
+    for (var i=0; i<monsterCount.length; i++){
+        if (
+            hero.x <= (monsterCount[i].x + 32)
+            && monsterCount[i].x <= (hero.x + 32)
+            && hero.y <= (monsterCount[i].y + 32)
+            && monsterCount[i].y <= (hero.y + 32)
+        ) {
+            ++monstersCaught;
+            monsterCount.splice(i,1);
+            reset();
+        }
+    }
 };
 
 // Draw everything
@@ -134,9 +138,11 @@ var render = function () {
 		ctx.drawImage(heroImage, hero.x, hero.y);
 	}
 
-	if (monsterReady) {
-		ctx.drawImage(monsterImage, monster.x, monster.y);
-	}
+    for (var i=0; i<monsterCount.length; i++){
+        if (monsterReady) {
+            ctx.drawImage(monsterImage, monsterCount[i].x, monsterCount[i].y);
+        }
+    }
 
 	// Score
 	ctx.fillStyle = "rgb(250, 250, 250)";
@@ -153,6 +159,12 @@ var main = function () {
 
 	update(delta / 1000);
 	render();
+
+    for (var i=0; i<monsterCount.length; i++){
+        moveMonster(i);
+    }
+
+
 
 	then = now;
 };

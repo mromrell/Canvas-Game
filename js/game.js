@@ -1,6 +1,7 @@
 // Create the canvas
 var canvas = document.createElement("canvas");
 var ctx = canvas.getContext("2d");
+var level = canvas.getContext("2d");
 canvas.width = 512;
 canvas.height = 480;
 document.body.appendChild(canvas);
@@ -47,29 +48,68 @@ addEventListener("keyup", function (e) {
 	delete keysDown[e.keyCode];
 }, false);
 
+//starts the hero in the middle of the board
+hero.x = canvas.width / 2;
+hero.y = canvas.height / 2;
+
+// set monster speed
+monster.speed = Math.random();
+monster.direction = Math.random() * Math.PI * 2;
+monster.turnSpeed = 0;
+
+monster.direction += monster.turnSpeed * 0.01;
+monster.x += Math.sin(monster.direction) * monster.speed;
+monster.y += Math.cos(monster.direction) * monster.speed;
+
+var monstersCount = 0;
 // Reset the game when the player catches a monster
 var reset = function () {
-	hero.x = canvas.width / 2;
-	hero.y = canvas.height / 2;
+//    if (monstersCount = 5){
+//        // Throw the monster somewhere on the screen randomly
+//        monster.x = 32 + (Math.random() * (canvas.width - 64));
+//        monster.y = 0; //32 + (Math.random() * (canvas.height - 64));
+//    }
+//    else {
+        // Throw the monster somewhere on the screen randomly
+        monster.x = 32 + (Math.random() * (canvas.width - 64));
+        monster.y = 0; //32 + (Math.random() * (canvas.height - 64));
 
-	// Throw the monster somewhere on the screen randomly
-	monster.x = 32 + (Math.random() * (canvas.width - 64));
-	monster.y = 32 + (Math.random() * (canvas.height - 64));
+        // this sets the motion of the monster
+        function moveMonster(){
+           if (monster.y < canvas.height -32) {
+                monster.y += 1;
+                setTimeout(moveMonster, 50);
+            }
+        }
+        moveMonster();
+        monstersCount +=1;
+//    }
 };
+
+
+
 
 // Update game objects
 var update = function (modifier) {
 	if (38 in keysDown) { // Player holding up
-		hero.y -= hero.speed * modifier;
+		if (hero.y >= 0){
+            hero.y -= hero.speed * modifier;
+        }
 	}
 	if (40 in keysDown) { // Player holding down
-		hero.y += hero.speed * modifier;
+        if (hero.y <= canvas.height - 32){
+		    hero.y += hero.speed * modifier;
+        }
 	}
 	if (37 in keysDown) { // Player holding left
-		hero.x -= hero.speed * modifier;
+        if (hero.x >= 0){
+		    hero.x -= hero.speed * modifier;
+        }
 	}
 	if (39 in keysDown) { // Player holding right
-		hero.x += hero.speed * modifier;
+        if (hero.x <= canvas.width - 32){
+		    hero.x += hero.speed * modifier;
+        }
 	}
 
 	// Are they touching?

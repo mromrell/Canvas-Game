@@ -2,7 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="ab520386-9407-488d-a185-6dcaff16113b" name="Default" comment="">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.gitignore" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/js/game.js" afterPath="$PROJECT_DIR$/js/game.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="canvas_game.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -28,7 +30,7 @@
       <file leaf-file-name="index.html" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/index.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="240">
+            <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="-0.0" vertical-offset="0" max-vertical-offset="240">
               <folding />
             </state>
           </provider>
@@ -37,7 +39,16 @@
       <file leaf-file-name="game.js" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/js/game.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="67" column="13" selection-start="1510" selection-end="1510" vertical-scroll-proportion="0.29161605" vertical-offset="765" max-vertical-offset="3930">
+            <state line="106" column="27" selection-start="2546" selection-end="2546" vertical-scroll-proportion="0.1798299" vertical-offset="1442" max-vertical-offset="4080">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name=".gitignore" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/.gitignore">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="0" column="5" selection-start="5" selection-end="5" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="90">
               <folding />
             </state>
           </provider>
@@ -61,6 +72,7 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
+        <option value="$PROJECT_DIR$/.gitignore" />
         <option value="$PROJECT_DIR$/js/game.js" />
       </list>
     </option>
@@ -354,6 +366,13 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/.gitignore">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="5" selection-start="5" selection-end="5" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="823">
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/index.html">
       <provider selected="true" editor-type-id="text-editor">
         <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="-0.0" vertical-offset="0" max-vertical-offset="240">
@@ -363,7 +382,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/js/game.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="67" column="13" selection-start="1510" selection-end="1510" vertical-scroll-proportion="0.29161605" vertical-offset="765" max-vertical-offset="3930">
+        <state line="106" column="27" selection-start="2546" selection-end="2546" vertical-scroll-proportion="0.1798299" vertical-offset="1442" max-vertical-offset="4080">
           <folding />
         </state>
       </provider>

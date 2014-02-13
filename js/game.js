@@ -35,11 +35,10 @@ var goodFoodImage = new Image();
     goodFoodImage.src = "images/goodfood"+Math.floor((Math.random()*11)+1)+".png";
 
 function createFoodImage(){
-    var goodFoodImage = new Image();
-    goodFoodImage.src = "images/goodfood"+Math.floor((Math.random()*11)+1)+".png";
-    return goodFoodImage.src;
+    var goodFoodImage2 = new Image();
+    goodFoodImage2.src = "images/goodfood"+Math.floor((Math.random()*11)+1)+".png";
+    return goodFoodImage2;
 }
-
 
 // Game objects
 var hero = {
@@ -210,7 +209,7 @@ var render = function () {
     }
     for (var i=0; i<goodFoodCount.length; i++){
         if (peanutReady) {
-            ctx.drawImage(goodFoodImage, goodFoodCount[i].x, goodFoodCount[i].y);
+            ctx.drawImage(goodFoodCount[i].img, goodFoodCount[i].x, goodFoodCount[i].y); //goodFoodImage
         }
     }
 

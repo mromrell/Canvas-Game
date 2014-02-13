@@ -1,7 +1,6 @@
 // Create the canvas
 var canvas = document.createElement("canvas");
 var ctx = canvas.getContext("2d");
-var level = canvas.getContext("2d");
 canvas.width = 512;
 canvas.height = 480;
 document.body.appendChild(canvas);
@@ -65,10 +64,15 @@ addEventListener("keyup", function (e) {
 hero.x = canvas.width / 2;
 hero.y = canvas.height / 2;
 
-var level = 0;
+var level = 3;
 
 function levelManager(){
-    level = 3;
+    if (totalScore % 10 == 0 && totalScore > 1){
+        console.log(level);
+        level += 1;
+        onScreenCounter();
+        onScreenGoodFoodCounter();
+    }
 }
 
 // Start Peanut --------------------------------------------------------------------------------------->
@@ -80,7 +84,10 @@ var createPeanut = function () {
     peanut.y = 0;
 
     peanutCount.push({'x':peanut.x,'y':peanut.y});
+
 };
+
+
 // this sets the motion of the peanut
 var lostLimit = 1000;
 var lostPeanutCount = 0;
@@ -94,15 +101,14 @@ function movePeanut(peanutIndex){
    }
 }
 function onScreenCounter(){
-    if (peanutCount <= level){
-        for (var i=0; i<level; i++){
+    if (peanutCount.length <= level){
+        var diff = level - peanutCount.length;
+        for (var i=0; i<diff; i++){
             createPeanut();
         }
     }
 }
 // End Peanut --------------------------------------------------------------------------------------->
-
-console.log(goodFoodImage.img);
 
 
 // Start Good Food --------------------------------------------------------------------------------------->
@@ -113,6 +119,7 @@ var createGoodFood = function () {
     var image = createFoodImage();
 
     goodFoodCount.push({'x':goodFood.x,'y':goodFood.y,'img':image});
+    console.log(goodFoodCount);
 };
 
 // this sets the motion of the goodFood
@@ -128,8 +135,10 @@ function moveGoodFood(goodFoodIndex){
    }
 }
 function onScreenGoodFoodCounter(){
-    if (goodFoodCount <= level){
-        for (var i=0; i<level; i++){
+
+    if (goodFoodCount.length <= level){
+        var diff = level - goodFoodCount.length;
+        for (var i=0; i<diff; i++){
             createGoodFood();
         }
     }
@@ -187,11 +196,12 @@ var update = function (modifier) {
             ++goodFoodCaught;
             goodFoodCount.splice(i,1);
             createGoodFood();
-            console.log(goodFoodCount);
+            levelManager();
         }
     }
 };
 
+var totalScore = 0;
 // Draw everything
 var render = function () {
 	if (bgReady) {
@@ -219,7 +229,7 @@ var render = function () {
 	ctx.textAlign = "left";
 	ctx.textBaseline = "top";
 
-    var totalScore = goodFoodCaught - peanutsCaught;
+    totalScore = goodFoodCaught - peanutsCaught;
 	ctx.fillText("Score: " + totalScore, 32, 32);
 };
 
@@ -233,9 +243,9 @@ var main = function () {
 
         update(delta / 1000);
         render();
-        onScreenGoodFoodCounter();
-        onScreenCounter();
-        levelManager();
+//        onScreenGoodFoodCounter();
+//        onScreenCounter();
+//        levelManager();
     //    onScreenCounter();
 
         for (var i=0; i<peanutCount.length; i++){

@@ -231,6 +231,7 @@ var render = function () {
 
     totalScore = goodFoodCaught - peanutsCaught;
 	ctx.fillText("Score: " + totalScore, 32, 32);
+	ctx.fillText("Bad Food: " + peanutsCaught, 32, 64);
 };
 
 var gameOverLimit = 3;
@@ -254,8 +255,12 @@ var main = function () {
         for (var i=0; i<goodFoodCount.length; i++){
             moveGoodFood(i);
         }
+
         then = now;
     }
+//    else {
+//            newGame();
+//        }
 };
 
 // Let's play this game!
@@ -263,4 +268,21 @@ onScreenGoodFoodCounter();
 onScreenCounter();
 
 var then = Date.now();
+
+
 setInterval(main, 1); // Execute as fast as possible
+
+//var newGame = function (){
+//
+//  if(confirm("do you want to exit")){
+//console.log('it works');
+//}
+//
+//};
+//
+//var resetButton = document.getElementbyId('resetButton');
+//resetButton.onclick= reloadPage;
+//
+//function reloadPage(){
+//   window.location.reload();
+//}

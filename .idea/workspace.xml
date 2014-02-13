@@ -2,9 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="ab520386-9407-488d-a185-6dcaff16113b" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.gitignore" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/js/game.js" afterPath="$PROJECT_DIR$/js/game.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/images/hero.png" afterPath="$PROJECT_DIR$/images/hero.png" />
     </list>
     <ignored path="canvas_game.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -39,7 +37,7 @@
       <file leaf-file-name="game.js" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/js/game.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="106" column="27" selection-start="2546" selection-end="2546" vertical-scroll-proportion="0.1798299" vertical-offset="1442" max-vertical-offset="4080">
+            <state line="253" column="51" selection-start="6475" selection-end="6475" vertical-scroll-proportion="0.945322" vertical-offset="3017" max-vertical-offset="4080">
               <folding />
             </state>
           </provider>
@@ -382,7 +380,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/js/game.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="106" column="27" selection-start="2546" selection-end="2546" vertical-scroll-proportion="0.1798299" vertical-offset="1442" max-vertical-offset="4080">
+        <state line="253" column="51" selection-start="6475" selection-end="6475" vertical-scroll-proportion="0.945322" vertical-offset="3017" max-vertical-offset="4080">
           <folding />
         </state>
       </provider>

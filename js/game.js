@@ -31,12 +31,15 @@ peanutImage.onload = function () {
 peanutImage.src = "images/peanut.png";
 
 // Good Food image
-var goodFoodReady = false;
 var goodFoodImage = new Image();
-goodFoodImage.onload = function () {
-	goodFoodReady = true;
-};
-goodFoodImage.src = "images/goodfood10.png";
+    goodFoodImage.src = "images/goodfood"+Math.floor((Math.random()*11)+1)+".png";
+
+function createFoodImage(){
+    var goodFoodImage = new Image();
+    goodFoodImage.src = "images/goodfood"+Math.floor((Math.random()*11)+1)+".png";
+    return goodFoodImage.src;
+}
+
 
 // Game objects
 var hero = {
@@ -63,8 +66,10 @@ addEventListener("keyup", function (e) {
 hero.x = canvas.width / 2;
 hero.y = canvas.height / 2;
 
-function gameOver(){
-    console.log("You Lose!");
+var level = 0;
+
+function levelManager(){
+    level = 3;
 }
 
 // Start Peanut --------------------------------------------------------------------------------------->
@@ -73,7 +78,7 @@ var peanutCount = [];
 // Reset the game when the player catches a peanut
 var createPeanut = function () {
     peanut.x = 32 + (Math.random() * (canvas.width - 64));
-    peanut.y = 0; //32 + (Math.random() * (canvas.height - 64));
+    peanut.y = 0;
 
     peanutCount.push({'x':peanut.x,'y':peanut.y});
 };
@@ -85,18 +90,11 @@ function movePeanut(peanutIndex){
         peanutCount[peanutIndex].y += .5;
    }
    else { // if peanut reaches the bottom of the board...
-
-       lostPeanutCount += 1;
-       if (lostPeanutCount == lostLimit){
-           gameOver();
-       }
-       else {
-            peanutCount.splice(peanutIndex,1);
-       }
+        peanutCount.splice(peanutIndex,1);
+       createPeanut();
    }
 }
 function onScreenCounter(){
-    var level = 3;
     if (peanutCount <= level){
         for (var i=0; i<level; i++){
             createPeanut();
@@ -105,15 +103,17 @@ function onScreenCounter(){
 }
 // End Peanut --------------------------------------------------------------------------------------->
 
+console.log(goodFoodImage.img);
+
 
 // Start Good Food --------------------------------------------------------------------------------------->
 var goodFoodCount = [];
 var createGoodFood = function () {
     goodFood.x = 32 + (Math.random() * (canvas.width - 64));
-    goodFood.y = 0; //32 + (Math.random() * (canvas.height - 64));
+    goodFood.y = 0;
+    var image = createFoodImage();
 
-    goodFoodCount.push({'x':goodFood.x,'y':goodFood.y});
-    console.log(goodFoodCount);
+    goodFoodCount.push({'x':goodFood.x,'y':goodFood.y,'img':image});
 };
 
 // this sets the motion of the goodFood
@@ -121,21 +121,14 @@ var lostGoodFoodLimit = 1000;
 var lostGoodFoodCount = 0;
 function moveGoodFood(goodFoodIndex){
    if (goodFoodCount[goodFoodIndex].y < canvas.height -32) {
-        goodFoodCount[goodFoodIndex].y += .5;
+       goodFoodCount[goodFoodIndex].y += .5;
    }
-   else { // if peanut reaches the bottom of the board...
-
-       lostGoodFoodCount += 1;
-       if (lostGoodFoodCount == lostGoodFoodLimit){
-           gameOver();
-       }
-       else {
-            goodFoodCount.splice(goodFoodIndex,1);
-       }
+   else { // if Good Food reaches the bottom of the board...
+       goodFoodCount.splice(goodFoodIndex,1);
+       createGoodFood();
    }
 }
 function onScreenGoodFoodCounter(){
-    var level = 3;
     if (goodFoodCount <= level){
         for (var i=0; i<level; i++){
             createGoodFood();
@@ -195,6 +188,7 @@ var update = function (modifier) {
             ++goodFoodCaught;
             goodFoodCount.splice(i,1);
             createGoodFood();
+            console.log(goodFoodCount);
         }
     }
 };
@@ -225,36 +219,39 @@ var render = function () {
 	ctx.font = "24px Helvetica";
 	ctx.textAlign = "left";
 	ctx.textBaseline = "top";
-	ctx.fillText("Goblins caught: " + peanutsCaught, 32, 32);
+
+    var totalScore = goodFoodCaught - peanutsCaught;
+	ctx.fillText("Score: " + totalScore, 32, 32);
 };
+
+var gameOverLimit = 3;
 
 // The main game loop
 var main = function () {
-	var now = Date.now();
-	var delta = now - then;
+    if (peanutsCaught < gameOverLimit){
+        var now = Date.now();
+        var delta = now - then;
 
-	update(delta / 1000);
-	render();
-//    onScreenCounter();
+        update(delta / 1000);
+        render();
+        onScreenGoodFoodCounter();
+        onScreenCounter();
+        levelManager();
+    //    onScreenCounter();
 
-    for (var i=0; i<peanutCount.length; i++){
-        movePeanut(i);
+        for (var i=0; i<peanutCount.length; i++){
+            movePeanut(i);
+        }
+        for (var i=0; i<goodFoodCount.length; i++){
+            moveGoodFood(i);
+        }
+        then = now;
     }
-    for (var i=0; i<goodFoodCount.length; i++){
-        moveGoodFood(i);
-    }
-
-
-
-
-
-	then = now;
 };
 
 // Let's play this game!
-createPeanut();
-createGoodFood();
+onScreenGoodFoodCounter();
+onScreenCounter();
+
 var then = Date.now();
 setInterval(main, 1); // Execute as fast as possible
-setInterval(onScreenCounter,Math.random());
-setInterval(onScreenGoodFoodCounter,Math.random());

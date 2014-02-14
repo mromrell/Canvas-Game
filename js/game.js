@@ -56,17 +56,17 @@ var hero = {
 	speed: 256 // movement in pixels per second
 };
 
-    var peanut = {};
-    var peanutsCaught = 0;
+var peanut = {};
+var peanutsCaught = 0;
 
-    var goodFood = {};
-    var goodFoodCaught = 0;
+var goodFood = {};
+var goodFoodCaught = 0;
 
-    var peanutCount = [];
+var peanutCount = [];
 
-    var lostPeanutCount = 0;
-    hero.x = canvas.width / 2;
-    hero.y = canvas.height / 2;
+var lostPeanutCount = 0;
+hero.x = canvas.width / 2;
+hero.y = canvas.height / 2;
 
 var id = 0;
 
@@ -126,9 +126,6 @@ function levelManager(){
 
 
 // Start Peanut --------------------------------------------------------------------------------------->
-//var peanutCount = [];
-
-// Reset the game when the player catches a peanut
 var createPeanut = function () {
     peanut.x = 32 + (Math.random() * (canvas.width - 64));
     peanut.y = 0;
@@ -230,15 +227,30 @@ function onScreenCloudCounter(){
 }
 // End Cloud --------------------------------------------------------------------------------------->
 
+var jetOnTime = 1;
+var jetOffTime = 0;
+
+// this sets the downward motion of the hero
+function moveHero(){
+   if (hero.y < canvas.height - 32 && ! keysDown[38]) {
+       hero.y += .4 * jetOffTime;
+       jetOffTime += 0.01
+   }
+   else { // if Hero reaches the bottom of the board...
+       jetOffTime =0;
+   }
+}
 
 
 var flipH = false;
+
 
 // Update game objects
 var update = function (modifier) {
 	if (38 in keysDown) { // Player holding up
 		if (hero.y >= 0 + (heroHeight/2)){
-            hero.y -= hero.speed * modifier;
+            jetOnTime += .01;
+            hero.y -= hero.speed * modifier * (jetOnTime);
         }
 	}
 	if (40 in keysDown) { // Player holding down
@@ -257,6 +269,9 @@ var update = function (modifier) {
 		    hero.x += hero.speed * modifier;
             flipH = false;
         }
+	}
+    if (! keysDown[38]) { // Player holding up
+		jetOnTime = 0;
 	}
 
 	// Is Hero touching a Peanut?
@@ -361,7 +376,8 @@ var main = function () {
             moveCloud(i);
         }
         then = now;
-        onScreenCloudCounter()
+        onScreenCloudCounter();
+        moveHero();
     }
 
 };

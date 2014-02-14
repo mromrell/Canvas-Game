@@ -1,8 +1,8 @@
 // Create the canvas
 var canvas = document.createElement("canvas");
 var ctx = canvas.getContext("2d");
-canvas.width = 512;
-canvas.height = 480;
+canvas.width = 800;
+canvas.height = 774;
 document.body.appendChild(canvas);
 
 // Background image
@@ -16,8 +16,8 @@ bgImage.src = "images/background.png";
 // Hero image
 var heroReady = false;
 var heroImage = new Image();
-var heroWidth = 30;
-var heroHeight = 52;
+var heroWidth = 43;
+var heroHeight = 80;
 heroImage.onload = function () {
 	heroReady = true;
 };
@@ -33,11 +33,11 @@ peanutImage.src = "images/peanut.png";
 
 // Good Food image
 var goodFoodImage = new Image();
-    goodFoodImage.src = "images/goodfood"+Math.floor((Math.random()*11)+1)+".png";
+    goodFoodImage.src = "images/goodfood"+Math.floor((Math.random()*12)+1)+".png";
 
 function createFoodImage(){
     var goodFoodImage2 = new Image();
-    goodFoodImage2.src = "images/goodfood"+Math.floor((Math.random()*11)+1)+".png";
+    goodFoodImage2.src = "images/goodfood"+Math.floor((Math.random()*12)+1)+".png";
     return goodFoodImage2;
 }
 
@@ -176,9 +176,9 @@ var update = function (modifier) {
 	// Is Hero touching a Peanut?
     for (var i=0; i<peanutCount.length; i++){
         if (
-            hero.x <= (peanutCount[i].x + 32)
+            hero.x - (heroWidth/2) <= (peanutCount[i].x + 32)
             && peanutCount[i].x <= (hero.x + (heroWidth/2))
-            && hero.y <= (peanutCount[i].y + 32)
+            && hero.y - (heroHeight/2) <= (peanutCount[i].y + 32)
             && peanutCount[i].y <= (hero.y + (heroHeight/2))
         ) {
             ++peanutsCaught;
@@ -190,9 +190,9 @@ var update = function (modifier) {
     // is Hero touching a good Food?
     for (var i=0; i<goodFoodCount.length; i++){
         if (
-            hero.x <= (goodFoodCount[i].x + 32)
+            hero.x - (heroWidth/2) <= (goodFoodCount[i].x + 32)
             && goodFoodCount[i].x <= (hero.x + (heroWidth/2))
-            && hero.y <= (goodFoodCount[i].y + 32)
+            && hero.y - (heroHeight/2) <= (goodFoodCount[i].y + 32)
             && goodFoodCount[i].y <= (hero.y + (heroHeight/2))
         ) {
             ++goodFoodCaught;

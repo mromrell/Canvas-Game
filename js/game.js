@@ -227,18 +227,31 @@ function onScreenCloudCounter(){
 }
 // End Cloud --------------------------------------------------------------------------------------->
 
+var momentum = 1;
+var momentumSpeed = .01;
 var jetOnTime = 1;
-var jetOffTime = 0;
 
 // this sets the downward motion of the hero
 function moveHero(){
-   if (hero.y < canvas.height - 32 && ! keysDown[38]) {
-       hero.y += .4 * jetOffTime;
-       jetOffTime += 0.01
+   if (! keysDown[38] && momentum > 1) { // if the up button is NOT being pressed then this makes the momentum drop
+       momentum -= momentumSpeed
    }
-   else { // if Hero reaches the bottom of the board...
-       jetOffTime =0;
+   if (hero.y < canvas.height - 32 && ! keysDown[38]) { // makes hero fall
+
+       if (hero.y < canvas.height - 32 && momentum > 1){ // release the up key and this will carry the hero up just a little higher
+           
+           hero.y -= momentum;
+           momentum -= momentumSpeed;
+           console.log(momentum + " # one");
+       }
+       if (momentum == 1){ // once his momentum is gone, this will make him fall
+            hero.y += .4 * momentum;
+           console.log(momentum  + " # two");
+       }
+
    }
+//   else { // if Hero reaches the bottom of the board...
+//   }
 }
 
 
@@ -249,8 +262,9 @@ var flipH = false;
 var update = function (modifier) {
 	if (38 in keysDown) { // Player holding up
 		if (hero.y >= 0 + (heroHeight/2)){
-            jetOnTime += .01;
-            hero.y -= hero.speed * modifier * (jetOnTime);
+            momentum += momentumSpeed;
+            console.log(momentum + " button up");
+            hero.y -= hero.speed * modifier * (momentum);
         }
 	}
 	if (40 in keysDown) { // Player holding down

@@ -87,6 +87,8 @@ var startGame = function () {
     peanutCount = [];
 
     lostPeanutCount = 0;
+    onScreenCounter();
+    onScreenGoodFoodCounter();
 
     id = setInterval(main, 1); // Execute as fast as possible
 
@@ -197,7 +199,7 @@ function onScreenGoodFoodCounter(){
 // Start Clouds --------------------------------------------------------------------------------------->
 var cloudCount = [];
 var createCloud = function () {
-    cloud.x = 32 + (Math.random() * (canvas.width - 64));
+    cloud.x = -132 + (Math.random() * (canvas.width +100));
     cloud.y = -100;
     var image = createCloudImage();
 
@@ -206,28 +208,22 @@ var createCloud = function () {
 
 // this sets the motion of the cloud
 function moveCloud(cloudIndex){
-   if (cloudCount[cloudIndex].y < canvas.height -32) {
-       cloudCount[cloudIndex].y += .5;
+   if (cloudCount[cloudIndex].y < canvas.height -132) {
+       cloudCount[cloudIndex].y += .1;
    }
    else { // if Good Food reaches the bottom of the board...
        cloudCount.splice(cloudIndex,1);
        createCloud();
    }
 }
+var timerCount = 0;
 function onScreenCloudCounter(){
-    var idealCloudCount = 4;
-    if (cloudCount.length <= idealCloudCount){
-        var diff = idealCloudCount - cloudCount.length;
-//        for (var i=0; i<diff; i++){
-//            createCloud();
-//        }
-        for (i = 0; i < 5; i++) {
-            (function(i) {
-                setTimeout(function () {
-                    createCloud();
-//                    console.log(i);
-                }, Math.floor(Math.random() * 5000)); //Math.floor((Math.random()*12)+1);
-            })(i);
+    var idealCloudCount = 24;
+    timerCount += 1;
+    if (timerCount == 300) {
+        if (cloudCount.length <= idealCloudCount){
+            createCloud();
+            timerCount = 0;
         }
     }
 

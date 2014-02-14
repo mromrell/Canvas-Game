@@ -16,6 +16,8 @@ bgImage.src = "images/background.png";
 // Hero image
 var heroReady = false;
 var heroImage = new Image();
+var heroWidth = 30;
+var heroHeight = 52;
 heroImage.onload = function () {
 	heroReady = true;
 };
@@ -119,7 +121,6 @@ var createGoodFood = function () {
     var image = createFoodImage();
 
     goodFoodCount.push({'x':goodFood.x,'y':goodFood.y,'img':image});
-    console.log(goodFoodCount);
 };
 
 // this sets the motion of the goodFood
@@ -145,29 +146,30 @@ function onScreenGoodFoodCounter(){
 }
 // End Good Food --------------------------------------------------------------------------------------->
 
-
-
+var flipH = false;
 
 // Update game objects
 var update = function (modifier) {
 	if (38 in keysDown) { // Player holding up
-		if (hero.y >= 0){
+		if (hero.y >= 0 + (heroHeight/2)){
             hero.y -= hero.speed * modifier;
         }
 	}
 	if (40 in keysDown) { // Player holding down
-        if (hero.y <= canvas.height - 32){
+        if (hero.y <= canvas.height - (heroHeight/2)){
 		    hero.y += hero.speed * modifier;
         }
 	}
 	if (37 in keysDown) { // Player holding left
-        if (hero.x >= 0){
+        if (hero.x >= 0 + (heroWidth/2)){
 		    hero.x -= hero.speed * modifier;
+            flipH = true;
         }
 	}
 	if (39 in keysDown) { // Player holding right
-        if (hero.x <= canvas.width - 32){
+        if (hero.x <= canvas.width - (heroWidth/2)){
 		    hero.x += hero.speed * modifier;
+            flipH = false;
         }
 	}
 
@@ -175,9 +177,9 @@ var update = function (modifier) {
     for (var i=0; i<peanutCount.length; i++){
         if (
             hero.x <= (peanutCount[i].x + 32)
-            && peanutCount[i].x <= (hero.x + 32)
+            && peanutCount[i].x <= (hero.x + (heroWidth/2))
             && hero.y <= (peanutCount[i].y + 32)
-            && peanutCount[i].y <= (hero.y + 32)
+            && peanutCount[i].y <= (hero.y + (heroHeight/2))
         ) {
             ++peanutsCaught;
             peanutCount.splice(i,1);
@@ -189,9 +191,9 @@ var update = function (modifier) {
     for (var i=0; i<goodFoodCount.length; i++){
         if (
             hero.x <= (goodFoodCount[i].x + 32)
-            && goodFoodCount[i].x <= (hero.x + 32)
+            && goodFoodCount[i].x <= (hero.x + (heroWidth/2))
             && hero.y <= (goodFoodCount[i].y + 32)
-            && goodFoodCount[i].y <= (hero.y + 32)
+            && goodFoodCount[i].y <= (hero.y + (heroHeight/2))
         ) {
             ++goodFoodCaught;
             goodFoodCount.splice(i,1);
@@ -202,14 +204,25 @@ var update = function (modifier) {
 };
 
 var totalScore = 0;
-// Draw everything
+
+
+// Draw everything ---------------------------------------------------------->
 var render = function () {
 	if (bgReady) {
 		ctx.drawImage(bgImage, 0, 0);
 	}
 
 	if (heroReady) {
-		ctx.drawImage(heroImage, hero.x, hero.y);
+        if (flipH == true){
+           var posX = (hero.x+(heroWidth/2)) * -1;
+            ctx.save(); // Save the current state
+            ctx.scale(-1, 1); // Set scale to flip the image
+		    ctx.drawImage(heroImage, posX, hero.y-(heroHeight/2), heroWidth, heroHeight);
+            ctx.restore(); // Restore the last saved state
+        }
+        else {
+            ctx.drawImage(heroImage, hero.x-(heroWidth/2), hero.y-(heroHeight/2));
+        }
 	}
 
     for (var i=0; i<peanutCount.length; i++){

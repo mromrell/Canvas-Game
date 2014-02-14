@@ -8,7 +8,7 @@ document.body.appendChild(canvas);
 // Background image
 var bgReady = false;
 var bgImage = new Image();
-bgImage.onload = function () {
+    bgImage.onload = function () {
 	bgReady = true;
 };
 bgImage.src = "images/background.png";
@@ -43,11 +43,42 @@ function createFoodImage(){
 var hero = {
 	speed: 256 // movement in pixels per second
 };
-var peanut = {};
-var peanutsCaught = 0;
 
-var goodFood = {};
-var goodFoodCaught = 0;
+    var peanut = {};
+    var peanutsCaught = 0;
+
+    var goodFood = {};
+    var goodFoodCaught = 0;
+
+    var peanutCount = [];
+
+    var lostPeanutCount = 0;
+    hero.x = canvas.width / 2;
+    hero.y = canvas.height / 2;
+
+var id = 0;
+
+var startGame = function () {
+
+    clearInterval(id);
+
+    peanut = {};
+    peanutsCaught = 0;
+
+    goodFood = {};
+    goodFoodCaught = 0;
+
+//starts the hero in the middle of the board
+    hero.x = canvas.width / 2;
+    hero.y = canvas.height / 2;
+
+    peanutCount = [];
+
+    lostPeanutCount = 0;
+
+    id = setInterval(main, 1); // Execute as fast as possible
+
+}
 
 // Handle keyboard controls
 var keysDown = {};
@@ -60,9 +91,7 @@ addEventListener("keyup", function (e) {
 	delete keysDown[e.keyCode];
 }, false);
 
-//starts the hero in the middle of the board
-hero.x = canvas.width / 2;
-hero.y = canvas.height / 2;
+
 
 var level = 3;
 
@@ -75,8 +104,7 @@ function levelManager(){
     }
 }
 
-// Start Peanut --------------------------------------------------------------------------------------->
-var peanutCount = [];
+
 
 // Reset the game when the player catches a peanut
 var createPeanut = function () {
@@ -90,7 +118,7 @@ var createPeanut = function () {
 
 // this sets the motion of the peanut
 var lostLimit = 1000;
-var lostPeanutCount = 0;
+
 function movePeanut(peanutIndex){
    if (peanutCount[peanutIndex].y < canvas.height -32) {
         peanutCount[peanutIndex].y += .5;
@@ -258,9 +286,7 @@ var main = function () {
 
         then = now;
     }
-//    else {
-//            newGame();
-//        }
+
 };
 
 // Let's play this game!
@@ -269,20 +295,9 @@ onScreenCounter();
 
 var then = Date.now();
 
+startGame();
 
-setInterval(main, 1); // Execute as fast as possible
 
-//var newGame = function (){
-//
-//  if(confirm("do you want to exit")){
-//console.log('it works');
-//}
-//
-//};
-//
-//var resetButton = document.getElementbyId('resetButton');
-//resetButton.onclick= reloadPage;
-//
-//function reloadPage(){
-//   window.location.reload();
-//}
+
+
+

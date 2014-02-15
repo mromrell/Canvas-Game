@@ -206,7 +206,7 @@ var createCloud = function () {
 
 // this sets the motion of the cloud
 function moveCloud(cloudIndex){
-   if (cloudCount[cloudIndex].y < canvas.height -132) {
+   if (cloudCount[cloudIndex].y < canvas.height + 132) {
        cloudCount[cloudIndex].y += .1;
    }
    else { // if Good Food reaches the bottom of the board...
@@ -423,8 +423,7 @@ var render = function () {
 
     totalScore = goodFoodCaught - peanutsCaught;
 	ctx.fillText("Score: " + totalScore, 32, 32);
-	ctx.fillText("Peanuts Caught: " + peanutsCaught, 32, 64);
-	ctx.fillText("Lives Left " + livesLeft, 32, 96);
+	ctx.fillText("Lives Left " + livesLeft + " of " + gameOverLimit, 32, 56);
 };
 
 

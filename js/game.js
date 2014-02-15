@@ -111,13 +111,14 @@ addEventListener("keyup", function (e) {
 }, false);
 
 
-
+var gameOverLimit = 5;
 var level = 3;
 
 function levelManager(){
     if (totalScore % 10 == 0 && totalScore > 1){
         console.log(level);
         level += 1;
+        gameOverLimit += 1;
         onScreenCounter();
         onScreenGoodFoodCounter();
     }
@@ -233,7 +234,7 @@ var momentumRight = 0;
 var momentumLeft = 0;
 var momentumSpeedUp = .008;
 var momentumSpeed = .003;
-var momentumSpeedHor = .009;
+var momentumSpeedHor = .007;
 
 // this sets the momentum of the hero
 function moveHero(){
@@ -418,12 +419,15 @@ var render = function () {
 	ctx.textAlign = "left";
 	ctx.textBaseline = "top";
 
+    var livesLeft = gameOverLimit - peanutsCaught;
+
     totalScore = goodFoodCaught - peanutsCaught;
 	ctx.fillText("Score: " + totalScore, 32, 32);
-	ctx.fillText("Bad Food: " + peanutsCaught, 32, 64);
+	ctx.fillText("Peanuts Caught: " + peanutsCaught, 32, 64);
+	ctx.fillText("Lives Left " + livesLeft, 32, 96);
 };
 
-var gameOverLimit = 3;
+
 
 // The main game loop
 var main = function () {

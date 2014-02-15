@@ -229,34 +229,80 @@ function onScreenCloudCounter(){
 
 var momentum = 1;
 var momentumDown = 1;
-var momentumSpeed = .01;
-var jetOnTime = 1;
+var momentumRight = 0;
+var momentumLeft = 0;
+var momentumSpeed = .001;
+var momentumSpeedHor = .009;
 
-// this sets the downward motion of the hero
+// this sets the momentum of the hero
 function moveHero(){
-   if (! keysDown[38] && momentum > 1) { // if the up button is NOT being pressed then this makes the momentum drop
-       momentum -= momentumSpeed
-       if (hero.y < heroHeight){ // if Hero reaches the bottom of the board...
-            momentum = 1
+
+    // Start Vertical Momentum ---------------------------------------->
+    if (!keysDown[38] && momentum > 1) { // if the up button is NOT being pressed then this makes the momentum drop
+        var momentumScale = momentum;
+        momentum -= momentumSpeed;
+        if (hero.y < heroHeight) { // if Hero reaches the bottom of the board...
+            momentum = 1;
+//            console.log(momentum + " should be 1");
         }
-   }
-   if (hero.y < canvas.height - (heroHeight/2) && ! keysDown[38]) { // makes hero fall
-
-       if (hero.y < canvas.height - (heroHeight/2) && momentum > 1 && hero.y > (heroHeight/2)){ // release the up key and this will carry the hero up just a little higher
-
-           hero.y -= momentum;
-           momentum -= momentumSpeed;
-       }
-       if (momentum == 1){ // once his momentum is gone, this will make him fall
-           if (momentumDown < 4){
-               momentumDown += momentumSpeed;
-           }
-           hero.y += .4 * momentumDown;
-       }
-   }
-    if (hero.y == canvas.height - (heroHeight/2)){ // if Hero reaches the bottom of the board...
+    }
+    if (hero.y < canvas.height - (heroHeight / 2) && !keysDown[38]) { // makes hero fall
+        if (momentum > 1 && hero.y > (heroHeight / 2)) { // release the up key and this will carry the hero up just a little higher
+            hero.y -= momentum;
+            momentum -= momentumSpeed;
+//            console.log(momentum + " up momentum");
+        }
+        if (momentum <= 1) { // once his momentum is gone, this will make him fall
+            if (momentumDown < 4) {
+                momentumDown += momentumSpeed;
+//                console.log(momentum + " should NOT be higher than 4");
+            }
+            hero.y += .4 * momentumDown;
+//            console.log(momentum + " Down Momentum");
+        }
+    }
+    if (hero.y == canvas.height - (heroHeight / 2)) { // if Hero reaches the bottom of the board...
         momentumDown = 1
     }
+    // End Vertical Momentum ---------------------------------------->
+
+
+    // Start Right Momentum ---------------------------------------->
+    if (!keysDown[39] && momentumRight > 0) { // if the right button is NOT being pressed then this makes the momentumRight drop
+        momentumRight -= momentumSpeedHor;
+        if (hero.x < heroWidth) { // if Hero reaches the far right of the board...
+            momentumRight = 1;
+        }
+    }
+    if (hero.x < canvas.width - (heroWidth / 2) && !keysDown[39]) { // release the Right key and this will carry the hero to the right just a little further
+        if (momentumRight > 0 && hero.x > (heroWidth / 2)) {
+            hero.x += momentumRight;
+            console.log(momentumRight + " momentum Right");
+        }
+    }
+    if (hero.x >= canvas.width - (heroWidth / 2)) { // if Hero reaches the right of the board...
+        momentumRight = 0;
+    }
+    // End Right Momentum ---------------------------------------->
+
+
+    // Start Left Momentum ---------------------------------------->
+    if (!keysDown[37] && momentumLeft > 0) { // if the left button is NOT being pressed then this makes the momentumLeft drop
+        momentumLeft -= momentumSpeedHor;
+        if (hero.x < heroWidth) { // if Hero reaches the far left of the board...
+            momentumLeft = 1;
+        }
+    }
+    if (hero.x > (heroWidth / 2) && !keysDown[37]) { // release the left key and this will carry the hero to the left just a little further
+        if (momentumLeft > 0 && hero.x > (heroWidth / 2)) {
+            hero.x -= momentumLeft;
+            console.log(momentumLeft + " momentum Left");
+        }
+    }
+    if (hero.x < (heroWidth / 2)) { // if Hero reaches the left of the board...
+        momentumLeft = 0
+    }
+    // End Left Momentum ---------------------------------------->
 
 
 }
@@ -281,18 +327,17 @@ var update = function (modifier) {
 	}
 	if (37 in keysDown) { // Player holding left
         if (hero.x >= 0 + (heroWidth/2)){
-		    hero.x -= hero.speed * modifier;
+            momentumLeft += momentumSpeedHor;
+		    hero.x -= hero.speed * modifier * (momentumLeft);
             flipH = true;
         }
 	}
 	if (39 in keysDown) { // Player holding right
         if (hero.x <= canvas.width - (heroWidth/2)){
-		    hero.x += hero.speed * modifier;
+            momentumRight += momentumSpeedHor;
+		    hero.x += hero.speed * modifier * (momentumRight);
             flipH = false;
         }
-	}
-    if (! keysDown[38]) { // Player holding up
-		jetOnTime = 0;
 	}
 
 	// Is Hero touching a Peanut?

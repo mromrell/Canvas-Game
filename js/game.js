@@ -17,11 +17,15 @@ bgImage.src = "images/background.png";
 var heroReady = false;
 var heroImage = new Image();
 var heroWidth = 43;
-var heroHeight = 80;
+var heroHeight = 100;
 heroImage.onload = function () {
 	heroReady = true;
 };
 heroImage.src = "images/hero.png";
+
+// Jetpack Flame
+var flameImage = new Image();
+flameImage.src = "images/flame.png";
 
 // Peanut image
 var peanutReady = false;
@@ -393,10 +397,16 @@ var render = function () {
            var posX = (hero.x+(heroWidth/2)) * -1;
             ctx.save(); // Save the current state
             ctx.scale(-1, 1); // Set scale to flip the image
+            if (keysDown[38]){
+		        ctx.drawImage(flameImage, posX, hero.y-(heroHeight/2), heroWidth, heroHeight);
+            }
 		    ctx.drawImage(heroImage, posX, hero.y-(heroHeight/2), heroWidth, heroHeight);
             ctx.restore(); // Restore the last saved state
         }
         else {
+            if (keysDown[38]){
+                ctx.drawImage(flameImage, hero.x-(heroWidth/2), hero.y-(heroHeight/2));
+            }
             ctx.drawImage(heroImage, hero.x-(heroWidth/2), hero.y-(heroHeight/2));
         }
 	}

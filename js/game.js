@@ -27,6 +27,15 @@ heroImage.src = "images/hero.png";
 var flameImage = new Image();
 flameImage.src = "images/flame.png";
 
+// Joystick
+var joystickImage = new Image();
+joystickImage.src = "images/joystick2.png";
+
+var joystickCenterImage = new Image();
+joystickCenterImage.src = "images/joystickCenter2.png";
+var joystickWidth = 150;
+var joystickHeight = 150;
+
 // Peanut image
 var peanutReady = false;
 var peanutImage = new Image();
@@ -379,6 +388,8 @@ var update = function (modifier) {
 };
 
 var totalScore = 0;
+var joystickX = canvas.width - (joystickWidth/2);
+var joystickY = canvas.height - (joystickHeight/2);
 
 
 // Draw everything ---------------------------------------------------------->
@@ -420,6 +431,10 @@ var render = function () {
         if (peanutReady) {
             ctx.drawImage(goodFoodCount[i].img, goodFoodCount[i].x, goodFoodCount[i].y); //goodFoodImage
         }
+    }
+    if (joystickImage){
+        ctx.drawImage(joystickImage, canvas.width - (joystickWidth), canvas.height - (joystickHeight));
+        ctx.drawImage(joystickCenterImage, canvas.width - (joystickWidth), canvas.height - (joystickHeight));
     }
 
 

@@ -124,12 +124,11 @@ addEventListener("keyup", function (e) {
 }, false);
 
 
-var gameOverLimit = 5;
+var gameOverLimit = 500; //change this back to 5 for production
 var level = 3;
 
 function levelManager(){
     if (totalScore % 10 == 0 && totalScore > 1){
-        console.log(level);
         level += 1;
         gameOverLimit += 1;
         onScreenCounter();
@@ -310,7 +309,6 @@ function moveHero(){
     if (hero.x > (heroWidth / 2) && !keysDown[37]) { // release the left key and this will carry the hero to the left just a little further
         if (momentumLeft > 0 && hero.x > (heroWidth / 2)) {
             hero.x -= momentumLeft;
-            console.log(momentumLeft + " momentum Left");
         }
     }
     if (hero.x < (heroWidth / 2)) { // if Hero reaches the left of the board...
@@ -323,11 +321,18 @@ function moveHero(){
 
 
 var flipH = false;
-
+var joystick = new VirtualJoystick({
+    mouseSupport: true,
+    stationaryBase: true,
+    baseX: 200,
+    baseY: 200,
+    limitStickTravel: true,
+    stickRadius: 50
+});
 
 // Update game objects
 var update = function (modifier) {
-	if (38 in keysDown) { // Player holding up
+	if (38 in keysDown || joystick.up()) { // Player holding up
 		if (hero.y >= 0 + (heroHeight/2)){
             momentum += momentumSpeedUp;
             if (momentumDown >= 0){
@@ -336,28 +341,69 @@ var update = function (modifier) {
             hero.y -= hero.speed * modifier * (momentum);
         }
 	}
-	if (40 in keysDown) { // Player holding down
+	if (40 in keysDown || joystick.down()) { // Player holding down
         if (hero.y <= canvas.height - (heroHeight/2)){
             momentum = 0;
 		    hero.y += hero.speed * modifier;
         }
 	}
-	if (37 in keysDown) { // Player holding left
+	if (37 in keysDown || joystick.left()) { // Player holding left
         if (hero.x >= 0 + (heroWidth/2)){
             momentumLeft += momentumSpeedHor;
-		    hero.x -= hero.speed * modifier * (momentumLeft);
+		    if (joystick.left()){hero.x -= hero.speed * momentumLeft;}
+		    if (keysDown[37]){hero.x -= hero.speed * modifier * momentumLeft;}
             flipH = true;
         }
+        if (hero.x < 20){
+            hero.x = 20;
+        }
 	}
-	if (39 in keysDown) { // Player holding right
+	if (39 in keysDown || joystick.right()) { // Player holding right
         if (hero.x <= canvas.width - (heroWidth/2)){
             momentumRight += momentumSpeedHor;
-		    hero.x += hero.speed * modifier * (momentumRight);
+            if (joystick.right()){hero.x += hero.speed * momentumRight;}
+            if (keysDown[39]){hero.x += hero.speed * modifier * momentumRight;}
             flipH = false;
         }
 	}
 
-	// Is Hero touching a Peanut?
+//    if (joystick.up()) {
+//        hero.y -= hero.speed * modifier * (momentum);
+//    }
+//    if (joystick.down()) {
+//        hero.y += hero.speed * modifier;
+//    }
+//    if (joystick.right()) {
+//        if (hero.x <= canvas.width - (heroWidth/2)){
+//            momentumRight += momentumSpeedHor;
+//		    hero.x += hero.speed * momentumRight;
+//            flipH = false;
+//        }
+//    }
+//    if (joystick.left()) {
+//        if (hero.x >= 0 + (heroWidth/2)){
+//            momentumLeft += momentumSpeedHor;
+//		    hero.x -= hero.speed * momentumLeft;
+//            flipH = true;
+//        }
+//    }
+
+//    if (joystick.right()) {
+//         console.log("Joystick Right");
+//    }
+//    if (joystick.left()) {
+//         console.log("Joystick Left");
+//    }
+//    if (joystick.up()) {
+//        console.log("Joystick Up");
+//    }
+//    if (joystick.down()) {
+//         console.log("Joystick Down");
+//    }
+
+
+
+    // Is Hero touching a Peanut?
     for (var i=0; i<peanutCount.length; i++){
         if (
             hero.x - (heroWidth/2) <= (peanutCount[i].x + 32)
@@ -408,14 +454,14 @@ var render = function () {
            var posX = (hero.x+(heroWidth/2)) * -1;
             ctx.save(); // Save the current state
             ctx.scale(-1, 1); // Set scale to flip the image
-            if (keysDown[38]){
+            if (keysDown[38] || joystick.up()){
 		        ctx.drawImage(flameImage, posX, hero.y-(heroHeight/2), heroWidth, heroHeight);
             }
 		    ctx.drawImage(heroImage, posX, hero.y-(heroHeight/2), heroWidth, heroHeight);
             ctx.restore(); // Restore the last saved state
         }
         else {
-            if (keysDown[38]){
+            if (keysDown[38] || joystick.up()){
                 ctx.drawImage(flameImage, hero.x-(heroWidth/2), hero.y-(heroHeight/2));
             }
             ctx.drawImage(heroImage, hero.x-(heroWidth/2), hero.y-(heroHeight/2));

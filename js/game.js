@@ -115,17 +115,6 @@ var cloud = {};
 var goodFood = {};
 var goodFoodCaught = 0;
 
-// Handle keyboard controls
-var keysDown = {};
-
-addEventListener("keydown", function (e) {
-	keysDown[e.keyCode] = true;
-}, false);
-
-addEventListener("keyup", function (e) {
-	delete keysDown[e.keyCode];
-}, false);
-
 
 var gameOverLimit = 500; //change this back to 5 for production
 var level = 3;
@@ -249,32 +238,28 @@ var momentumRight = 0;
 var momentumLeft = 0;
 var momentumSpeedUp = .008;
 var momentumSpeed = .003;
-var momentumSpeedHor = .007;
+var momentumSpeedHor = .00007;
 
 // this sets the momentum of the hero
 function moveHero(){
 
     // Start Vertical Momentum ---------------------------------------->
-    if ((!keysDown[38] || !joystick.up()) && momentum > 0) { // if the up button is NOT being pressed then this makes the momentum drop
+    if (!joystick.up() && momentum > 0) { // if the up button is NOT being pressed then this makes the momentum drop
         momentum -= momentumSpeed;
         if (hero.y < heroHeight/2) { // if Hero reaches the bottom of the board...
             momentum = 0;
-//            console.log(momentum + " should be 1");
         }
     }
-    if (hero.y < canvas.height - (heroHeight / 2) && (!keysDown[38] || !joystick.up())) { // release the up key
+    if (hero.y < canvas.height - (heroHeight / 2) && !joystick.up()) { // release the up key
         if (momentum > 0 && hero.y > (heroHeight / 2)) { // this will carry the hero up just a little higher
             hero.y -= momentum;
             momentum -= momentumSpeed;
-//            console.log(momentum + " up momentum");
         }
         if (momentum <= 0) { // once his momentum is gone, this will make him fall
             if (momentumDown < 4) {
                 momentumDown += momentumSpeed;
-//                console.log(momentum + " should NOT be higher than 4");
             }
             hero.y += .4 * momentumDown;
-//            console.log(momentum + " Down Momentum");
         }
     }
     if (hero.y == canvas.height - (heroHeight / 2)) { // if Hero reaches the bottom of the board...
@@ -284,36 +269,23 @@ function moveHero(){
 
 
     // Start Right Momentum ---------------------------------------->
-    if ((!keysDown[39] || !joystick.right()) && momentumRight > 0) { // if the right button is NOT being pressed then this makes the momentumRight drop
-        momentumRight -= momentumSpeedHor;
-        if (hero.x < heroWidth) { // if Hero reaches the far right of the board...
-            momentumRight = 1;
-        }
-    }
-    if (hero.x < canvas.width - (heroWidth / 2) && (!keysDown[39] || !joystick.right())) { // release the Right key and this will carry the hero to the right just a little further
-        if (momentumRight > 0 && hero.x > (heroWidth / 2)) {
-            hero.x += momentumRight;
-//            console.log(momentumRight + " momentum Right");
-        }
-    }
-    if (hero.x >= canvas.width - (heroWidth / 2)) { // if Hero reaches the right of the board...
+    if (hero.x >= canvas.width - (heroWidth)) { // if Hero reaches the far right of the board...
         momentumRight = 0;
+        hero.x = canvas.width - (heroWidth);
+    }
+    if (!joystick.right() && momentumRight > 0 && hero.x < canvas.width - (heroWidth / 2)) { // if the right button is NOT being pressed then this makes the momentumRight drop
+        momentumRight -= momentumSpeedHor;
+        hero.x += momentumRight;
     }
     // End Right Momentum ---------------------------------------->
 
 
     // Start Left Momentum ---------------------------------------->
-    if ((!keysDown[37] || !joystick.left()) && momentumLeft > 0) { // if the left button is NOT being pressed then this makes the momentumLeft drop
+    if (!joystick.left() && momentumLeft > 0 && hero.x > (heroWidth / 2)) { // if the left button is NOT being pressed then this makes the momentumLeft drop
         momentumLeft -= momentumSpeedHor;
-        if (hero.x < heroWidth) { // if Hero reaches the far left of the board...
-            momentumLeft = 1;
-        }
+        hero.x -= momentumLeft;
     }
-    if (hero.x > (heroWidth / 2) && (!keysDown[37] || !joystick.left())) { // release the left key and this will carry the hero to the left just a little further
-        if (momentumLeft > 0 && hero.x > (heroWidth / 2)) {
-            hero.x -= momentumLeft;
-        }
-    }
+
     if (hero.x < (heroWidth / 2)) { // if Hero reaches the left of the board...
         momentumLeft = 0;
         hero.x = (heroWidth / 2);  // this is here as a hack fix to a bug with the joystick
@@ -325,8 +297,8 @@ function moveHero(){
 
 
 var flipH = false;
-var joystickX = canvas.width - (150/2);
-var joystickY = canvas.height - (150/2);
+//var joystickX = canvas.width - (150/2);
+//var joystickY = canvas.height - (150/2);
 var joystick = new VirtualJoystick({
     mouseSupport: true,
 //    stationaryBase: true,
@@ -339,7 +311,7 @@ var joystick = new VirtualJoystick({
 
 // Update game objects
 var update = function (modifier) {
-	if (38 in keysDown || joystick.up()) { // Player holding up
+	if (joystick.up()) { // Player holding up
 		if (hero.y >= 0 + (heroHeight/2)){
             momentum += momentumSpeedUp;
             if (momentumDown >= 0){
@@ -348,17 +320,16 @@ var update = function (modifier) {
             hero.y -= hero.speed * modifier * (momentum);
         }
 	}
-	if (40 in keysDown || joystick.down()) { // Player holding down
+	if (joystick.down()) { // Player holding down
         if (hero.y <= canvas.height - (heroHeight/2)){
             momentum = 0;
 		    hero.y += hero.speed * modifier;
         }
 	}
-	if (37 in keysDown || joystick.left()) { // Player holding left
+	if (joystick.left()) { // Player holding left
         if (hero.x >= 0 + (heroWidth/2)){
             momentumLeft += momentumSpeedHor;
-		    if (joystick.left()){hero.x -= hero.speed * momentumLeft;}
-		    if (keysDown[37]){hero.x -= hero.speed * modifier * momentumLeft;}
+		    hero.x -= hero.speed * momentumLeft;
             flipH = true;
         }
 //        if (hero.x < 0){
@@ -366,11 +337,10 @@ var update = function (modifier) {
 //            hero.x = 50;
 //        }
 	}
-	if (39 in keysDown || joystick.right()) { // Player holding right
+	if (joystick.right()) { // Player holding right
         if (hero.x <= canvas.width - (heroWidth/2)){
             momentumRight += momentumSpeedHor;
-            if (joystick.right()){hero.x += hero.speed * momentumRight;}
-            if (keysDown[39]){hero.x += hero.speed * modifier * momentumRight;}
+            hero.x += hero.speed * momentumRight;
             flipH = false;
         }
 	}
@@ -447,9 +417,9 @@ var totalScore = 0;
 
 // Draw everything ---------------------------------------------------------->
 var render = function () {
-//	if (bgReady) {
-//		ctx.drawImage(bgImage, 0, 0);
-//	}
+	if (bgReady) {
+		ctx.drawImage(bgImage, 0, 0);
+	}
 
     for (var i=0; i<cloudCount.length; i++){
         if (peanutReady) {
@@ -461,14 +431,14 @@ var render = function () {
            var posX = (hero.x+(heroWidth/2)) * -1;
             ctx.save(); // Save the current state
             ctx.scale(-1, 1); // Set scale to flip the image
-            if (keysDown[38] || joystick.up()){
+            if (joystick.up()){
 		        ctx.drawImage(flameImage, posX, hero.y-(heroHeight/2), heroWidth, heroHeight);
             }
 		    ctx.drawImage(heroImage, posX, hero.y-(heroHeight/2), heroWidth, heroHeight);
             ctx.restore(); // Restore the last saved state
         }
         else {
-            if (keysDown[38] || joystick.up()){
+            if (joystick.up()){
                 ctx.drawImage(flameImage, hero.x-(heroWidth/2), hero.y-(heroHeight/2));
             }
             ctx.drawImage(heroImage, hero.x-(heroWidth/2), hero.y-(heroHeight/2));

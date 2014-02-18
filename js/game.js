@@ -9,8 +9,8 @@ document.body.appendChild(canvas);
 // Background image
 var bgReady = false;
 var bgImage = new Image();
-    bgImage.onload = function () {
-	bgReady = true;
+bgImage.onload = function () {
+    bgReady = true;
 };
 bgImage.src = "images/background.png";
 bgImage.width = canvas.width;
@@ -22,7 +22,7 @@ var heroImage = new Image();
 var heroWidth = 43;
 var heroHeight = 100;
 heroImage.onload = function () {
-	heroReady = true;
+    heroReady = true;
 };
 heroImage.src = "images/hero.png";
 
@@ -30,61 +30,64 @@ heroImage.src = "images/hero.png";
 var flameImage = new Image();
 flameImage.src = "images/flame.png";
 
-//// Joystick
-//var joystickImage = new Image();
-//joystickImage.src = "images/joystick2.png";
-//
-//var joystickCenterImage = new Image();
-//joystickCenterImage.src = "images/joystickCenter2.png";
-//var joystickWidth = 150;
-//var joystickHeight = 150;
-
 // Peanut image
 var peanutReady = false;
 var peanutImage = new Image();
 peanutImage.onload = function () {
-	peanutReady = true;
+    peanutReady = true;
 };
 peanutImage.src = "images/peanut.png";
 
 // Good Food images
 var goodFoodImage = new Image();
-    goodFoodImage.src = "images/goodfood"+Math.floor((Math.random()*12)+1)+".png";
+goodFoodImage.src = "images/goodfood" + Math.floor((Math.random() * 12) + 1) + ".png";
 
-function createFoodImage(){
+function createFoodImage() {
     var goodFoodImage2 = new Image();
-    goodFoodImage2.src = "images/goodfood"+Math.floor((Math.random()*12)+1)+".png";
+    goodFoodImage2.src = "images/goodfood" + Math.floor((Math.random() * 12) + 1) + ".png";
     return goodFoodImage2;
 }
 
 // Cloud images
 var cloudImage = new Image();
-    cloudImage.src = "images/cloud"+Math.floor((Math.random()*4)+1)+".png";
+cloudImage.src = "images/cloud" + Math.floor((Math.random() * 4) + 1) + ".png";
 
-function createCloudImage(){
+function createCloudImage() {
     var cloudImage2 = new Image();
-    cloudImage2.src = "images/cloud"+Math.floor((Math.random()*4)+1)+".png";
+    cloudImage2.src = "images/cloud" + Math.floor((Math.random() * 4) + 1) + ".png";
     return cloudImage2;
 }
 
 // Game objects
 var hero = {
-	speed: 256 // movement in pixels per second
+    speed: 256 // movement in pixels per second
 };
 
 var peanut = {};
 var peanutsCaught = 0;
-
+var peanutCount = [];
+var totalScore = 0;
+var cloud = {};
 var goodFood = {};
 var goodFoodCaught = 0;
-
-var peanutCount = [];
-
+var gameOverLimit = 10; //change this back to 5 for production
+var level = 3;
+var id = 0;
 var lostPeanutCount = 0;
 hero.x = canvas.width / 2;
 hero.y = canvas.height / 2;
+var flipH = false;
+//var joystickX = canvas.width - (150/2);
+//var joystickY = canvas.height - (150/2);
+var joystick = new VirtualJoystick({
+    mouseSupport: true,
+//    stationaryBase: true,
+//    baseX: joystickX,
+//    baseY: joystickY,
+    limitStickTravel: true,
+    stickRadius: 50
+});
 
-var id = 0;
 
 var startGame = function () {
 
@@ -108,19 +111,10 @@ var startGame = function () {
 
     id = setInterval(main, 1); // Execute as fast as possible
 
-}
+};
 
-var cloud = {};
-
-var goodFood = {};
-var goodFoodCaught = 0;
-
-
-var gameOverLimit = 10; //change this back to 5 for production
-var level = 3;
-
-function levelManager(){
-    if (totalScore % 10 == 0 && totalScore > 1){
+function levelManager() {
+    if (totalScore % 10 == 0 && totalScore > 1) {
         level += 1;
         gameOverLimit += 1;
         onScreenCounter();
@@ -128,34 +122,28 @@ function levelManager(){
     }
 }
 
-
-
 // Start Peanut --------------------------------------------------------------------------------------->
 var createPeanut = function () {
     peanut.x = 32 + (Math.random() * (canvas.width - 64));
     peanut.y = 0;
-
-    peanutCount.push({'x':peanut.x,'y':peanut.y});
+    peanutCount.push({'x': peanut.x, 'y': peanut.y});
 
 };
 
-
 // this sets the motion of the peanut
-var lostLimit = 1000;
-
-function movePeanut(peanutIndex){
-   if (peanutCount[peanutIndex].y < canvas.height -32) {
+function movePeanut(peanutIndex) {
+    if (peanutCount[peanutIndex].y < canvas.height - 32) {
         peanutCount[peanutIndex].y += .5;
-   }
-   else { // if peanut reaches the bottom of the board...
-        peanutCount.splice(peanutIndex,1);
-       createPeanut();
-   }
+    }
+    else { // if peanut reaches the bottom of the board...
+        peanutCount.splice(peanutIndex, 1);
+        createPeanut();
+    }
 }
-function onScreenCounter(){
-    if (peanutCount.length <= level){
+function onScreenCounter() {
+    if (peanutCount.length <= level) {
         var diff = level - peanutCount.length;
-        for (var i=0; i<diff; i++){
+        for (var i = 0; i < diff; i++) {
             createPeanut();
         }
     }
@@ -170,26 +158,24 @@ var createGoodFood = function () {
     goodFood.y = 0;
     var image = createFoodImage();
 
-    goodFoodCount.push({'x':goodFood.x,'y':goodFood.y,'img':image});
+    goodFoodCount.push({'x': goodFood.x, 'y': goodFood.y, 'img': image});
 };
 
 // this sets the motion of the goodFood
-var lostGoodFoodLimit = 1000;
-var lostGoodFoodCount = 0;
-function moveGoodFood(goodFoodIndex){
-   if (goodFoodCount[goodFoodIndex].y < canvas.height -32) {
-       goodFoodCount[goodFoodIndex].y += .5;
-   }
-   else { // if Good Food reaches the bottom of the board...
-       goodFoodCount.splice(goodFoodIndex,1);
-       createGoodFood();
-   }
+function moveGoodFood(goodFoodIndex) {
+    if (goodFoodCount[goodFoodIndex].y < canvas.height - 32) {
+        goodFoodCount[goodFoodIndex].y += .5;
+    }
+    else { // if Good Food reaches the bottom of the board...
+        goodFoodCount.splice(goodFoodIndex, 1);
+        createGoodFood();
+    }
 }
-function onScreenGoodFoodCounter(){
+function onScreenGoodFoodCounter() {
 
-    if (goodFoodCount.length <= level){
+    if (goodFoodCount.length <= level) {
         var diff = level - goodFoodCount.length;
-        for (var i=0; i<diff; i++){
+        for (var i = 0; i < diff; i++) {
             createGoodFood();
         }
     }
@@ -197,33 +183,32 @@ function onScreenGoodFoodCounter(){
 // End Good Food --------------------------------------------------------------------------------------->
 
 
-
 // Start Clouds --------------------------------------------------------------------------------------->
 var cloudCount = [];
 var createCloud = function () {
-    cloud.x = -132 + (Math.random() * (canvas.width +100));
+    cloud.x = -132 + (Math.random() * (canvas.width + 100));
     cloud.y = -100;
     var image = createCloudImage();
 
-    cloudCount.push({'x':cloud.x,'y':cloud.y,'img':image});
+    cloudCount.push({'x': cloud.x, 'y': cloud.y, 'img': image});
 };
 
 // this sets the motion of the cloud
-function moveCloud(cloudIndex){
-   if (cloudCount[cloudIndex].y < canvas.height + 132) {
-       cloudCount[cloudIndex].y += .1;
-   }
-   else { // if Good Food reaches the bottom of the board...
-       cloudCount.splice(cloudIndex,1);
-       createCloud();
-   }
+function moveCloud(cloudIndex) {
+    if (cloudCount[cloudIndex].y < canvas.height + 132) {
+        cloudCount[cloudIndex].y += .1;
+    }
+    else { // if Good Food reaches the bottom of the board...
+        cloudCount.splice(cloudIndex, 1);
+        createCloud();
+    }
 }
 var timerCount = 0;
-function onScreenCloudCounter(){
+function onScreenCloudCounter() {
     var idealCloudCount = 34;
     timerCount += 1;
     if (timerCount == 300) {
-        if (cloudCount.length <= idealCloudCount){
+        if (cloudCount.length <= idealCloudCount) {
             createCloud();
             timerCount = 0;
         }
@@ -232,6 +217,7 @@ function onScreenCloudCounter(){
 }
 // End Cloud --------------------------------------------------------------------------------------->
 
+// this sets the momentum of the hero
 var momentum = 0;
 var momentumDown = 0;
 var momentumRight = 0;
@@ -240,13 +226,12 @@ var momentumSpeedUp = .006;
 var momentumSpeed = .003;
 var momentumSpeedHor = .005;
 
-// this sets the momentum of the hero
-function moveHero(){
+function moveHero() {
 
     // Start Vertical Momentum ---------------------------------------->
     if (!joystick.up() && momentum > 0) { // if the up button is NOT being pressed then this makes the momentum drop
         momentum -= momentumSpeed;
-        if (hero.y < heroHeight/2) { // if Hero reaches the bottom of the board...
+        if (hero.y < heroHeight / 2) { // if Hero reaches the bottom of the board...
             momentum = 0;
         }
     }
@@ -295,123 +280,109 @@ function moveHero(){
 
 }
 
-
-var flipH = false;
-//var joystickX = canvas.width - (150/2);
-//var joystickY = canvas.height - (150/2);
-var joystick = new VirtualJoystick({
-    mouseSupport: true,
-//    stationaryBase: true,
-//    baseX: joystickX,
-//    baseY: joystickY,
-    limitStickTravel: true,
-    stickRadius: 50
-});
-
-
 // Update game objects
 var update = function (modifier) {
-	if (joystick.up()) { // Player holding up
-		if (hero.y >= 0 + (heroHeight/2)){
+    if (joystick.up()) { // Player holding up
+        if (hero.y >= 0 + (heroHeight / 2)) {
             momentum += momentumSpeedUp;
-            if (momentumDown >= 0){
+            if (momentumDown >= 0) {
                 momentumDown -= momentumSpeedUp;
             }
             hero.y -= hero.speed * modifier * (momentum);
         }
-	}
-	if (joystick.down()) { // Player holding down
-        if (hero.y <= canvas.height - (heroHeight/2)){
+    }
+    if (joystick.down()) { // Player holding down
+        if (hero.y <= canvas.height - (heroHeight / 2)) {
             momentum = 0;
-		    hero.y += hero.speed * modifier;
+            hero.y += hero.speed * modifier;
         }
-	}
-	if (joystick.left()) { // Player holding left
-        if (hero.x >= 0 + (heroWidth/2)){
+    }
+    if (joystick.left()) { // Player holding left
+        if (hero.x >= 0 + (heroWidth / 2)) {
             momentumLeft += momentumSpeedHor;
-		    hero.x -= hero.speed * modifier * momentumLeft;
+            hero.x -= hero.speed * modifier * momentumLeft;
             flipH = true;
         }
-	}
-	if (joystick.right()) { // Player holding right
-        if (hero.x <= canvas.width - (heroWidth/2)){
+    }
+    if (joystick.right()) { // Player holding right
+        if (hero.x <= canvas.width - (heroWidth / 2)) {
             momentumRight += momentumSpeedHor;
             hero.x += hero.speed * modifier * momentumRight;
             flipH = false;
         }
-	}
+    }
 
 
     // Is Hero touching a Peanut?
-    for (var i=0; i<peanutCount.length; i++){
+    for (var i = 0; i < peanutCount.length; i++) {
         if (
-            hero.x - (heroWidth/2) <= (peanutCount[i].x + 32)
-            && peanutCount[i].x <= (hero.x + (heroWidth/2))
-            && hero.y - (heroHeight/2) <= (peanutCount[i].y + 32)
-            && peanutCount[i].y <= (hero.y + (heroHeight/2))
-        ) {
+            hero.x - (heroWidth / 2) <= (peanutCount[i].x + 32)
+                && peanutCount[i].x <= (hero.x + (heroWidth / 2))
+                && hero.y - (heroHeight / 2) <= (peanutCount[i].y + 32)
+                && peanutCount[i].y <= (hero.y + (heroHeight / 2))
+            ) {
             ++peanutsCaught;
-            peanutCount.splice(i,1);
+            peanutCount.splice(i, 1);
             createPeanut();
         }
     }
 
     // is Hero touching a good Food?
-    for (var i=0; i<goodFoodCount.length; i++){
+    for (var i = 0; i < goodFoodCount.length; i++) {
         if (
-            hero.x - (heroWidth/2) <= (goodFoodCount[i].x + 32)
-            && goodFoodCount[i].x <= (hero.x + (heroWidth/2))
-            && hero.y - (heroHeight/2) <= (goodFoodCount[i].y + 32)
-            && goodFoodCount[i].y <= (hero.y + (heroHeight/2))
-        ) {
+            hero.x - (heroWidth / 2) <= (goodFoodCount[i].x + 32)
+                && goodFoodCount[i].x <= (hero.x + (heroWidth / 2))
+                && hero.y - (heroHeight / 2) <= (goodFoodCount[i].y + 32)
+                && goodFoodCount[i].y <= (hero.y + (heroHeight / 2))
+            ) {
             ++goodFoodCaught;
-            goodFoodCount.splice(i,1);
+            goodFoodCount.splice(i, 1);
             createGoodFood();
             levelManager();
         }
     }
+
+    // This will adjust the size of the canvas if the window is resized.
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
 };
-
-var totalScore = 0;
-
-
 
 // Draw everything ---------------------------------------------------------->
 var render = function () {
-	if (bgReady) {
-		ctx.drawImage(bgImage, 0, 0);
-	}
+    if (bgReady) {
+        ctx.drawImage(bgImage, 0, 0);
+    }
 
-    for (var i=0; i<cloudCount.length; i++){
+    for (var i = 0; i < cloudCount.length; i++) {
         if (peanutReady) {
             ctx.drawImage(cloudCount[i].img, cloudCount[i].x, cloudCount[i].y); // cloud Image
         }
     }
-	if (heroReady) {
-        if (flipH == true){
-           var posX = (hero.x+(heroWidth/2)) * -1;
+    if (heroReady) {
+        if (flipH == true) {
+            var posX = (hero.x + (heroWidth / 2)) * -1;
             ctx.save(); // Save the current state
             ctx.scale(-1, 1); // Set scale to flip the image
-            if (joystick.up()){
-		        ctx.drawImage(flameImage, posX, hero.y-(heroHeight/2), heroWidth, heroHeight);
+            if (joystick.up()) {
+                ctx.drawImage(flameImage, posX, hero.y - (heroHeight / 2), heroWidth, heroHeight);
             }
-		    ctx.drawImage(heroImage, posX, hero.y-(heroHeight/2), heroWidth, heroHeight);
+            ctx.drawImage(heroImage, posX, hero.y - (heroHeight / 2), heroWidth, heroHeight);
             ctx.restore(); // Restore the last saved state
         }
         else {
-            if (joystick.up()){
-                ctx.drawImage(flameImage, hero.x-(heroWidth/2), hero.y-(heroHeight/2));
+            if (joystick.up()) {
+                ctx.drawImage(flameImage, hero.x - (heroWidth / 2), hero.y - (heroHeight / 2));
             }
-            ctx.drawImage(heroImage, hero.x-(heroWidth/2), hero.y-(heroHeight/2));
+            ctx.drawImage(heroImage, hero.x - (heroWidth / 2), hero.y - (heroHeight / 2));
         }
-	}
+    }
 
-    for (var i=0; i<peanutCount.length; i++){
+    for (var i = 0; i < peanutCount.length; i++) {
         if (peanutReady) {
             ctx.drawImage(peanutImage, peanutCount[i].x, peanutCount[i].y);
         }
     }
-    for (var i=0; i<goodFoodCount.length; i++){
+    for (var i = 0; i < goodFoodCount.length; i++) {
         if (peanutReady) {
             ctx.drawImage(goodFoodCount[i].img, goodFoodCount[i].x, goodFoodCount[i].y); //goodFoodImage
         }
@@ -422,38 +393,37 @@ var render = function () {
 //    }
 
 
-	// Score
-	ctx.fillStyle = "rgb(250, 250, 250)";
-	ctx.font = "24px Helvetica";
-	ctx.textAlign = "left";
-	ctx.textBaseline = "top";
+    // Score
+    ctx.fillStyle = "rgb(250, 250, 250)";
+    ctx.font = "24px Helvetica";
+    ctx.textAlign = "left";
+    ctx.textBaseline = "top";
 
     var livesLeft = gameOverLimit - peanutsCaught;
 
     totalScore = goodFoodCaught - peanutsCaught;
-	ctx.fillText("Score: " + totalScore, 32, 32);
-	ctx.fillText("Lives Left " + livesLeft + " of " + gameOverLimit, 32, 56);
+    ctx.fillText("Score: " + totalScore, 32, 32);
+    ctx.fillText("Lives Left " + livesLeft + " of " + gameOverLimit, 32, 56);
 };
-
 
 
 // The main game loop
 var main = function () {
-    if (peanutsCaught < gameOverLimit){
+    if (peanutsCaught < gameOverLimit) {
         var now = Date.now();
         var delta = now - then;
 
         update(delta / 1000);
         render();
 
-        for (var i=0; i<peanutCount.length; i++){
+        for (var i = 0; i < peanutCount.length; i++) {
             movePeanut(i);
         }
-        for (var i=0; i<goodFoodCount.length; i++){
+        for (var i = 0; i < goodFoodCount.length; i++) {
             moveGoodFood(i);
         }
 
-        for (var i=0; i<cloudCount.length; i++){
+        for (var i = 0; i < cloudCount.length; i++) {
             moveCloud(i);
         }
         then = now;
@@ -469,8 +439,6 @@ onScreenCounter();
 
 
 var then = Date.now();
-
-
 startGame();
 
 setInterval(main, 1); // Execute as fast as possible

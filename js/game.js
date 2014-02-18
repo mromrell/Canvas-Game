@@ -116,7 +116,7 @@ var goodFood = {};
 var goodFoodCaught = 0;
 
 
-var gameOverLimit = 500; //change this back to 5 for production
+var gameOverLimit = 10; //change this back to 5 for production
 var level = 3;
 
 function levelManager(){
@@ -220,7 +220,7 @@ function moveCloud(cloudIndex){
 }
 var timerCount = 0;
 function onScreenCloudCounter(){
-    var idealCloudCount = 24;
+    var idealCloudCount = 34;
     timerCount += 1;
     if (timerCount == 300) {
         if (cloudCount.length <= idealCloudCount){
@@ -236,9 +236,9 @@ var momentum = 0;
 var momentumDown = 0;
 var momentumRight = 0;
 var momentumLeft = 0;
-var momentumSpeedUp = .008;
+var momentumSpeedUp = .006;
 var momentumSpeed = .003;
-var momentumSpeedHor = .00007;
+var momentumSpeedHor = .005;
 
 // this sets the momentum of the hero
 function moveHero(){
@@ -329,56 +329,17 @@ var update = function (modifier) {
 	if (joystick.left()) { // Player holding left
         if (hero.x >= 0 + (heroWidth/2)){
             momentumLeft += momentumSpeedHor;
-		    hero.x -= hero.speed * momentumLeft;
+		    hero.x -= hero.speed * modifier * momentumLeft;
             flipH = true;
         }
-//        if (hero.x < 0){
-//            momentumLeft = 0;
-//            hero.x = 50;
-//        }
 	}
 	if (joystick.right()) { // Player holding right
         if (hero.x <= canvas.width - (heroWidth/2)){
             momentumRight += momentumSpeedHor;
-            hero.x += hero.speed * momentumRight;
+            hero.x += hero.speed * modifier * momentumRight;
             flipH = false;
         }
 	}
-
-//    if (joystick.up()) {
-//        hero.y -= hero.speed * modifier * (momentum);
-//    }
-//    if (joystick.down()) {
-//        hero.y += hero.speed * modifier;
-//    }
-//    if (joystick.right()) {
-//        if (hero.x <= canvas.width - (heroWidth/2)){
-//            momentumRight += momentumSpeedHor;
-//		    hero.x += hero.speed * momentumRight;
-//            flipH = false;
-//        }
-//    }
-//    if (joystick.left()) {
-//        if (hero.x >= 0 + (heroWidth/2)){
-//            momentumLeft += momentumSpeedHor;
-//		    hero.x -= hero.speed * momentumLeft;
-//            flipH = true;
-//        }
-//    }
-
-//    if (joystick.right()) {
-//         console.log("Joystick Right");
-//    }
-//    if (joystick.left()) {
-//         console.log("Joystick Left");
-//    }
-//    if (joystick.up()) {
-//        console.log("Joystick Up");
-//    }
-//    if (joystick.down()) {
-//         console.log("Joystick Down");
-//    }
-
 
 
     // Is Hero touching a Peanut?
